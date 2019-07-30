@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Object = UnityEngine.Object;
 
-namespace PictureMatching
+namespace Framework.Common
 {
     public class Timer
     {

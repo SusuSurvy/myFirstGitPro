@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Framework.Common;
 
-namespace RetroSnake
+namespace WhackMole
 {
     public class ObsTable 
     {

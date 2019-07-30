@@ -1,141 +1,152 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using PictureMatching;
+using Framework.Common;
 using UnityEngine;
-using RobotAvatar.Commom.Event;
-/// <summary>
-/// 蛇头控制
-/// </summary>
-public class PlayerMgr : MonoBehaviour
+using UnityEngine.UI;
+namespace WhackMole
 {
-    public const int Speed = 200;
-    public const int DeltaLength = 70;
-    Vector2 direction = Vector2.up;
-    List<BodyMgr> bodyList = new List<BodyMgr>();
-    void Start()
+    public class PlayerMgr : MonoBehaviour
     {
-   
-        m_time = 0;
-        transform.localEulerAngles = new Vector3(0, 0, 90);
-    }
+        private GameObject m_downImage, m_upImage, m_rightImage, m_leftImage;
 
-    private float m_time;
-    void Update()
-    {
-        m_time += Time.deltaTime;
+        private GameObject m_lastImage;
 
-        if (Input.GetKeyDown(KeyCode.W)&& direction!= Vector2.up&& direction != Vector2.down)
-        {
-            direction = Vector2.up;
-            transform.localEulerAngles=new Vector3(0,0,90);
-            AddTargetPoint();
-        }
-        if (Input.GetKeyDown(KeyCode.S) && direction != Vector2.up && direction != Vector2.down)
-        {
-            direction = Vector2.down;
-            transform.localEulerAngles = new Vector3(0, 0, -90);
-            AddTargetPoint();
-        }
-        if (Input.GetKeyDown(KeyCode.A) && direction != Vector2.left && direction != Vector2.right)
-        {
-            direction = Vector2.left;
-            transform.localEulerAngles = new Vector3(0, 180, 0);
-            AddTargetPoint();
-        }
-        if (Input.GetKeyDown(KeyCode.D) && direction != Vector2.left && direction != Vector2.right)
-        {
-            direction = Vector2.right;
-            transform.localEulerAngles = new Vector3(0, 0, 0);
-            AddTargetPoint();
-        }
-        transform.localPosition += new Vector3(direction.x, direction.y, 0) * Time.deltaTime * Speed;
-       
-    }
+        private Vector3 m_direction;
 
-    private void AddTargetPoint()
-    {
-        if (bodyList.Count > 0)
+        private Direction m_dirEnum;
+        private CharacterController m_controller;
+        private enum Direction
         {
-            for (int i = bodyList.Count - 1; i >= 0; i--)
+            Up,
+            Down,
+            Left,
+            Right
+        }
+        // Use this for initialization
+        void Start()
+        {
+            m_controller = transform.GetComponent<CharacterController>();
+            InitPlayerImage();
+        }
+
+        private void InitPlayerImage()
+        {
+            m_downImage = ObjectEX.GetGameObjectByName(this.gameObject, "down");
+            m_upImage = ObjectEX.GetGameObjectByName(this.gameObject, "up");
+            m_upImage.SetActive(false);
+            m_rightImage = ObjectEX.GetGameObjectByName(this.gameObject, "right");
+            m_rightImage.SetActive(false);
+            m_leftImage = ObjectEX.GetGameObjectByName(this.gameObject, "left");
+            m_leftImage.SetActive(false);
+            m_lastImage = m_downImage;
+            m_dirEnum = Direction.Down;
+            m_lastImage.SetActive(true);
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            Update(Time.deltaTime);
+        }
+
+        public void Update(float fTimer)
+        {
+            if (Input.GetKey(KeyCode.A))
             {
-                bodyList[i].SetTargetPos(transform.localPosition);
-             //   bodyList[i].SetTargetPos(bodyList[i - 1].transform.localPosition);
+
+                PlayerMove(Direction.Left,fTimer);
             }
-          //  bodyList[0].SetTargetPos(transform.localPosition);
+            else if (Input.GetKey(KeyCode.D))
+            {
+
+                PlayerMove(Direction.Right, fTimer);
+            }
+            else if (Input.GetKey(KeyCode.W))
+            {
+
+                PlayerMove(Direction.Up, fTimer);
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+
+                PlayerMove(Direction.Down, fTimer);
+            }
+           
         }
 
-      
-    }
+        private void ChangePlayerDirection(Direction direction)
+        {
+            GameObject temObj = null;
+            switch (direction)
+            {
+                case Direction.Up:
+                    temObj = m_upImage;
+                    m_direction = Vector3.up;
+                    break;
+                case Direction.Down:
+                    temObj = m_downImage;
+                    m_direction = Vector3.down;
+                    break;
+                case Direction.Left:
+                    temObj = m_leftImage;
+                    m_direction = Vector3.left;
+                    break;
+                case Direction.Right:
+                    temObj = m_rightImage;
+                    m_direction = Vector3.right;
+                    break;
+            }
 
-    private void SetOriginalPos(BodyMgr body)
-    {
-        float deltaLength = DeltaLength;
-        Transform m_targetTrans;
-        Vector3 dir;
-        if (bodyList.Count > 0)
-        {
-            m_targetTrans = bodyList.Last().transform;
-            dir = bodyList.Last().GetDir();
-            body.InitPosList(bodyList.Last().PosList);
-        }
-        else
-        {
-            m_targetTrans = transform;
-            dir = direction;
-        }
-        Debug.Log(dir);
-     
+            if (temObj != m_lastImage)
+            {
+                m_lastImage.SetActive(false);
+                m_lastImage = temObj;
+                if (m_lastImage != null)
+                {
+                    m_lastImage.SetActive(true);
+                }
+                temObj = null;
+            }
         
-        Vector3 pos = new Vector3();
-        pos = m_targetTrans.localPosition - dir* deltaLength;
-
-
-        body.transform.localPosition = pos;
-        bodyList.Add(body);
-
-
-    }
-
-
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer ==8)
-        {
-            EventDispatcher.TriggerEvent(GameEvent.GameLose,false);
-            return;
-        }
-       
-
-        Item itemInfo = other.GetComponent<Item>();
-
-        EventDispatcher.TriggerEvent(GameEvent.TouchItem,itemInfo.Index);
-        other.transform.GetComponent<Collider>().enabled = false;
-    
-        BodyMgr bodyMgr = other.GetComponent<BodyMgr>();
-            if (bodyMgr == null)
-            {
-                bodyMgr = other.gameObject.AddComponent<BodyMgr>();
-          
-            }
-            
-            if (bodyList.Count > 0)
-            {
-                bodyMgr.TargeTransform = bodyList.Last().transform;
-             
-            }
-            else
-            {
-                bodyMgr.TargeTransform = transform;
+           
          
+
         }
 
-        SetOriginalPos(bodyMgr);
-      
-      
-      
+        private const float Speed = 50;
+        private void PlayerMove(Direction direction,float mTimer)
+        {
+            if (m_dirEnum != direction)
+            {
+                m_dirEnum = direction;
+                ChangePlayerDirection(direction);
+            }
+
+            m_controller.Move(m_direction * Speed * mTimer);
+           // transform.localPosition += ;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            switch (other.tag)
+            {
+                case "Top1":
+                    transform.SetSiblingIndex(2);
+                    break;
+                case "Top2":
+                    transform.SetSiblingIndex(3);
+                    break;
+                case "Top3":
+                    transform.SetSiblingIndex(4);
+                    break;
+                case "Top4":
+                    transform.SetSiblingIndex(5);
+                    break;
+
+
+            }
+        }
     }
 
-  
 }
+
