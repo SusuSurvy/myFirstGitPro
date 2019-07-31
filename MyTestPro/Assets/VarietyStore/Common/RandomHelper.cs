@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WhackMole;
 
 namespace Framework.Common
 {
@@ -38,7 +40,6 @@ namespace Framework.Common
             }
             return result;
         }
-
 
         public static float Range(float min, float max, string key = "defaut")
         {

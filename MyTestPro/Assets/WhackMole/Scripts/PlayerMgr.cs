@@ -25,6 +25,7 @@ namespace WhackMole
         // Use this for initialization
         void Start()
         {
+           
             m_controller = transform.GetComponent<CharacterController>();
             InitPlayerImage();
         }
@@ -123,7 +124,14 @@ namespace WhackMole
             }
 
             m_controller.Move(m_direction * Speed * mTimer);
-           // transform.localPosition += ;
+            if (transform.localPosition.z != 0)
+            {
+                Vector3 pos = transform.localPosition;
+                pos.z = 0;
+                transform.localPosition = pos;
+            }
+
+            // transform.localPosition += ;
         }
 
         private void OnTriggerEnter(Collider other)

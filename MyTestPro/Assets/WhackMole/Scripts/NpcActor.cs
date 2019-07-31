@@ -1,39 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Framework.Common;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace WhackMole
 {
-    public class NpcActor : MonoBehaviour
+    public class Actor : MonoBehaviour
     {
 
-        private const float MiniPlayTime = 2.0f;
+    }
+    public enum NpcState
+    {
+        Work = 0,
+        Sleep,
+        PlayPhone,
+        Internet,
+        Scare,
+        Count
 
-        private const float MaxPlayTime = 10.0f;
-        private enum State
-        {
-            Work=0,
-            Sleep,
-            PlayPhone,
-            Internet,
-            Scare,
-            Count
+    }
+    public class NpcActor : Actor
+    {
 
-        }
+      
 
-        private State m_currentState;
+        public StateMachine<NpcActor> StateMachine { get; set; }
 
-        private GameObject m_workImage, m_sleepImage, m_playPhoneImage, m_internetImage, m_scareImage;
+        private GameObject m_workImage, m_sleepImage, m_playPhoneImage, m_internetImage, m_scareImage, m_boomImage;
+
+        private Button m_AbuseBtn, m_HitBtn;
 
         private GameObject m_lastImage;
 
-        private Timer m_trigger;
+        public bool IsBossShow;
         // Use this for initialization
         void Start()
         {
             InitUi();
-            WaitToPlay();
+            IsBossShow = false;
+            StateMachine =new StateMachine<NpcActor>(this);
+            StateMachine.SetCurrentState(new NpcStateWork());
+            StateMachine.SetGlobalStateState(new NpcGlobalState());
         }
 
         private void InitUi()
@@ -47,36 +56,49 @@ namespace WhackMole
             m_internetImage.SetActive(false);
             m_scareImage = ObjectEX.GetGameObjectByName(gameObject, "Scare");
             m_scareImage.SetActive(false);
+            m_boomImage= ObjectEX.GetGameObjectByName(gameObject, "BoomBtn");
+            m_boomImage.SetActive(false);
+            m_AbuseBtn = ObjectEX.GetGameObjectByName(gameObject, "AbuseBtn").GetComponent<Button>();
+            m_AbuseBtn.onClick.AddListener(BossAbuse);
+             m_HitBtn = ObjectEX.GetGameObjectByName(gameObject, "HitBtn").GetComponent<Button>();
+            m_HitBtn.onClick.AddListener(BossHit);
             m_lastImage = m_workImage;
             m_lastImage.SetActive(transform);
-            m_currentState = State.Work;
+         
 
         }
 
-        private void WaitToPlay()
+        private void BossAbuse()
         {
-          
-            float seed = RandomHelper.Range(MiniPlayTime, MaxPlayTime);
-            m_trigger= Timer.New(seed, () => { ChangeToPlay(); });
+            StateMachine.HandleMessage(new StateEvent(StateEventType.BossAbuse));
+            m_boomImage.SetActive(false);
         }
 
-        private void ChangeToPlay()
+        private void BossHit()
         {
-            int seed = RandomHelper.Range(1, (int)State.Count);
-            State state = (State)seed;
+            StateMachine.HandleMessage(new StateEvent(StateEventType.BossHit));
+            m_boomImage.SetActive(false);
+        }
+
+        public void ChangeState(NpcState state)
+        {
+       
             GameObject temObj = null;
             switch (state)
             {
-                case State.Sleep:
+                case NpcState.Work:
+                    temObj = m_workImage;
+                    break;
+                case NpcState.Sleep:
                     temObj = m_sleepImage;
                     break;
-                case State.PlayPhone:
+                case NpcState.PlayPhone:
                     temObj = m_playPhoneImage;
                     break;
-                case State.Internet:
+                case NpcState.Internet:
                     temObj = m_internetImage;
                     break;
-                case State.Scare:
+                case NpcState.Scare:
                     temObj = m_scareImage;
                     break;
             }
@@ -88,13 +110,36 @@ namespace WhackMole
                 m_lastImage.SetActive(true);
             }
 
-            WaitToPlay();
+        
+        }
+
+        public void ShowBoom(bool show)
+        {
+            m_boomImage.SetActive(show);
         }
 
         // Update is called once per frame
         void Update()
         {
+            StateMachine.SMUpdate(Time.deltaTime);
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag.Equals("Player"))
+            {
+                IsBossShow = true;
+                StateMachine.HandleMessage(new StateEvent(StateEventType.BossCome));
+            }
 
+      
+        }
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.tag.Equals("Player"))
+            {
+                IsBossShow = false;
+                StateMachine.HandleMessage(new StateEvent(StateEventType.BossLeave));
+            }
         }
     }
 
