@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace RobotAvatar.Commom.Event
-{
-
+namespace WhackMole
+{ 
     /// <summary>
     /// 事件处理异常。
     /// </summary>

@@ -25,7 +25,9 @@ namespace WhackMole
         // Use this for initialization
         void Start()
         {
-           
+#if UNITY_EDITOR
+            TestScene.SetEnable(true);
+#endif
             m_controller = transform.GetComponent<CharacterController>();
             InitPlayerImage();
         }
@@ -49,9 +51,26 @@ namespace WhackMole
         {
             Update(Time.deltaTime);
         }
-
+        private float m_fpsTimer;
+        private int m_fpsCount;
         public void Update(float fTimer)
         {
+
+
+            // FPS temp code
+#if UNITY_EDITOR
+            ++m_fpsCount;
+            m_fpsTimer += Time.deltaTime;
+            if (m_fpsTimer >= 0.5f)
+            {
+
+                TestScene.ShowLabel("FPS      ", (m_fpsCount / m_fpsTimer).ToString("f2"));
+                m_fpsCount = 0;
+                m_fpsTimer = 0f;
+            }
+#endif
+
+
             if (Input.GetKey(KeyCode.A))
             {
 

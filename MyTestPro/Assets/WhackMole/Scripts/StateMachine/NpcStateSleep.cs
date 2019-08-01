@@ -24,6 +24,7 @@ namespace WhackMole
                     owner.StateMachine.ChangeState(new NpcStateScare());
                     return true;
                 case StateEventType.BossAbuse:
+                    EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.SleepAddProgress);
                     owner.StateMachine.ChangeState(new NpcStateWork());
                     return true;
             }

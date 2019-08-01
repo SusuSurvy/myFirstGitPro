@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<font>
+  <info face="Arial" size="32" bold="0" italic="0" charset="" unicode="1" stretchH="100" smooth="1" aa="1" padding="0,0,0,0" spacing="1,1" outline="0"/>
+  <common lineHeight="32" base="26" scaleW="256" scaleH="256" pages="1" packed="0" alphaChnl="1" redChnl="0" greenChnl="0" blueChnl="0"/>
+  <pages>
+    <page id="0" file="caomei_0.png" />
+  </pages>
+  <chars count="10">
+    <char id="48" x="60" y="0" width="54" height="64" xoffset="0" yoffset="0" xadvance="54" page="0" chnl="15" />
+    <char id="49" x="0" y="130" width="32" height="64" xoffset="0" yoffset="0" xadvance="32" page="0" chnl="15" />
+    <char id="50" x="55" y="65" width="50" height="64" xoffset="0" yoffset="0" xadvance="50" page="0" chnl="15" />
+    <char id="51" x="106" y="65" width="50" height="64" xoffset="0" yoffset="0" xadvance="50" page="0" chnl="15" />
+    <char id="52" x="0" y="0" width="59" height="64" xoffset="0" yoffset="0" xadvance="59" page="0" chnl="15" />
+    <char id="53" x="208" y="65" width="47" height="64" xoffset="0" yoffset="0" xadvance="47" page="0" chnl="15" />
+    <char id="54" x="115" y="0" width="54" height="64" xoffset="0" yoffset="0" xadvance="54" page="0" chnl="15" />
+    <char id="55" x="157" y="65" width="50" height="64" xoffset="0" yoffset="0" xadvance="50" page="0" chnl="15" />
+    <char id="56" x="170" y="0" width="54" height="64" xoffset="0" yoffset="0" xadvance="54" page="0" chnl="15" />
+    <char id="57" x="0" y="65" width="54" height="64" xoffset="0" yoffset="0" xadvance="54" page="0" chnl="15" />
+  </chars>
+</font>

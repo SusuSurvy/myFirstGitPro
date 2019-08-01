@@ -20,6 +20,8 @@ namespace WhackMole
             {
                 case StateEventType.BossCome:
                     owner.StateMachine.ChangeState(new NpcStateWork());
+                    EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.InternetAddProgress);
+
                     return true;
                
             }

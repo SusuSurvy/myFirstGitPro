@@ -7,7 +7,7 @@ namespace WhackMole
     public class NpcGlobalState : StateBase<NpcActor>
     {
 
-       
+    
     }
 
 }

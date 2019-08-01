@@ -27,6 +27,7 @@ namespace WhackMole
                     owner.StateMachine.ChangeState(new NpcStateScare());
                     return true;
                 case StateEventType.BossHit:
+                    EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.PlayPhoneAddProgress);
                     owner.StateMachine.ChangeState(new NpcStateWork());
                     return true;
             }

@@ -13,21 +13,33 @@ namespace WhackMole
 
         private float m_seed;
 
+        private const float AddProgressTime=1.5f;
         
         public override void Enter(NpcActor owner)
         {
             base.Enter(owner);
             owner.ChangeState(NpcState.Work);
             m_seed = RandomHelper.Range(MiniPlayTime, MaxPlayTime);
+            m_addTime = 0;
         }
 
+        private float m_addTime;
         public override void Execute(NpcActor owner, float fTimer)
         {
             base.Execute(owner, fTimer);
             m_time += fTimer;
             if (m_time > m_seed)
             {
+                m_time = 0;
                 TryToPlay(owner);
+                return;
+            }
+
+            m_addTime += fTimer;
+            if (m_addTime > AddProgressTime)
+            {
+                m_addTime = 0;
+                EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.WorkAddProgress);
             }
 
 
