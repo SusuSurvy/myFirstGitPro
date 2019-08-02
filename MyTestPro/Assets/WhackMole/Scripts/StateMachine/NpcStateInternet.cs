@@ -11,6 +11,7 @@ namespace WhackMole
         {
             base.Enter(owner);
             owner.ChangeState(NpcState.Internet);
+         
         }
 
        

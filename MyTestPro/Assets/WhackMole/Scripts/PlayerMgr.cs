@@ -9,6 +9,7 @@ namespace WhackMole
     {
         private GameObject m_downImage, m_upImage, m_rightImage, m_leftImage;
 
+        private GameObject m_angryImage;
         private GameObject m_lastImage;
 
         private Vector3 m_direction;
@@ -28,6 +29,7 @@ namespace WhackMole
 #if UNITY_EDITOR
             TestScene.SetEnable(true);
 #endif
+            EventDispatcher.AddEventListener(BattleEvent.BossAngry,BossAngry);
             m_controller = transform.GetComponent<CharacterController>();
             InitPlayerImage();
         }
@@ -40,6 +42,9 @@ namespace WhackMole
             m_rightImage = ObjectEX.GetGameObjectByName(this.gameObject, "right");
             m_rightImage.SetActive(false);
             m_leftImage = ObjectEX.GetGameObjectByName(this.gameObject, "left");
+
+            m_angryImage= ObjectEX.GetGameObjectByName(this.gameObject, "angry");
+            m_angryImage.SetActive(false);
             m_leftImage.SetActive(false);
             m_lastImage = m_downImage;
             m_dirEnum = Direction.Down;
@@ -92,6 +97,15 @@ namespace WhackMole
                 PlayerMove(Direction.Down, fTimer);
             }
            
+        }
+
+        private void BossAngry()
+        {
+            m_angryImage.SetActive(true);
+            Timer.New(1, () =>
+            {
+                m_angryImage.SetActive(false);
+            });
         }
 
         private void ChangePlayerDirection(Direction direction)
@@ -172,6 +186,11 @@ namespace WhackMole
 
 
             }
+        }
+
+        private void OnDestroy()
+        {
+            EventDispatcher.RemoveEventListener(BattleEvent.BossAngry, BossAngry);
         }
     }
 

@@ -10,7 +10,7 @@ namespace WhackMole
     {
         private Text m_minuteText, m_secondText;
 
-        private const int TotalTime = 300;
+        private const int TotalTime = 120;
 
         private float m_time;
 

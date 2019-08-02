@@ -4,7 +4,7 @@ namespace WhackMole
     {
         public readonly static string AddProgress = "BattleEvent.AddProgress";
         public readonly static string GameEnd = "BattleEvent.GameEnd";
-
+        public readonly static string BossAngry = "BattleEvent.BossAngry";
     }
    
 

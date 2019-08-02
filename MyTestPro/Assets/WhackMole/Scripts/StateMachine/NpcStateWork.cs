@@ -21,6 +21,7 @@ namespace WhackMole
         {
             base.Enter(owner);
             owner.ChangeState(NpcState.Work);
+            owner.ShowBoom(false);
             m_seed = RandomHelper.Range(MiniPlayTime, MaxPlayTime);
             m_addTime = 0;
         }

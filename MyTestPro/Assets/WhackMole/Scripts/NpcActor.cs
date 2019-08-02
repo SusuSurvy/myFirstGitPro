@@ -43,6 +43,8 @@ namespace WhackMole
 
         private GameObject m_hitToWorkImage, m_NormalWorkImage, m_ownerWorkImage;
 
+        private GameObject m_waterImage;
+
         private Button m_AbuseBtn, m_HitBtn;
 
         private GameObject m_lastImage;
@@ -85,7 +87,11 @@ namespace WhackMole
             m_NormalWorkImage = ObjectEX.GetGameObjectByName(gameObject, "NormalWork");
             m_NormalWorkImage.SetActive(false);
             m_ownerWorkImage = ObjectEX.GetGameObjectByName(gameObject, "ReturnWork");
+
             m_ownerWorkImage.SetActive(false);
+
+            m_waterImage= ObjectEX.GetGameObjectByName(gameObject, "Water");
+            m_waterImage.SetActive(false);
             m_lastWorkImage = m_NormalWorkImage;
 
             m_lastImage.SetActive(transform);
@@ -135,6 +141,8 @@ namespace WhackMole
                     m_lastWorkImage = temObj;
                 }
                 m_lastWorkImage.SetActive(true);
+
+              
                 Timer.New(1f, () => { m_lastWorkImage.SetActive(false); });
 
             }
@@ -142,6 +150,12 @@ namespace WhackMole
 
           
 
+        }
+
+        public void ShowWater()
+        {
+            m_waterImage.SetActive(true);
+            Timer.New(2f, () => { m_waterImage.SetActive(false); });
         }
 
         public void ChangeState(NpcState state)
