@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WhackMole
 {
-    public class NpcStatePlayPhone : StateBase<NpcActor>
+    public class NpcStatePlayPhone : NpcStatePlay
     {
 
         public override void Enter(NpcActor owner)
@@ -27,7 +27,7 @@ namespace WhackMole
                     owner.StateMachine.ChangeState(new NpcStateScare());
                     return true;
                 case StateEventType.BossHit:
-                    EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.PlayPhoneAddProgress);
+                    owner.RefreshWorkSate(WorkState.HitToWork);
                     owner.StateMachine.ChangeState(new NpcStateWork());
                     return true;
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace WhackMole
 {
-    public class NpcStateSleep : StateBase<NpcActor>
+    public class NpcStateSleep : NpcStatePlay
     {
         public override void Enter(NpcActor owner)
         {
@@ -24,7 +24,7 @@ namespace WhackMole
                     owner.StateMachine.ChangeState(new NpcStateScare());
                     return true;
                 case StateEventType.BossAbuse:
-                    EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.SleepAddProgress);
+                    owner.RefreshWorkSate(WorkState.HitToWork);
                     owner.StateMachine.ChangeState(new NpcStateWork());
                     return true;
             }

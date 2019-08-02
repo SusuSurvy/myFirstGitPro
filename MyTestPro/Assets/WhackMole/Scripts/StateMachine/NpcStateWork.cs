@@ -14,7 +14,9 @@ namespace WhackMole
         private float m_seed;
 
         private const float AddProgressTime=1.5f;
-        
+
+      
+
         public override void Enter(NpcActor owner)
         {
             base.Enter(owner);
@@ -39,7 +41,7 @@ namespace WhackMole
             if (m_addTime > AddProgressTime)
             {
                 m_addTime = 0;
-                EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.WorkAddProgress);
+                owner.RefreshWorkSate(WorkState.NormalWork);
             }
 
 

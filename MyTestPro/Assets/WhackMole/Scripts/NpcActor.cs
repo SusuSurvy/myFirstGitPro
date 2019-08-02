@@ -17,10 +17,21 @@ namespace WhackMole
         Sleep,
         PlayPhone,
         Internet,
-        Scare,
+        ScareStart,
+        Scaring,
         Count
 
     }
+
+    public enum WorkState
+    {
+        HitToWork,
+        NormalWork,
+        OwnerReturnWork,
+      
+    }
+
+    
     public class NpcActor : Actor
     {
 
@@ -28,12 +39,15 @@ namespace WhackMole
 
         public StateMachine<NpcActor> StateMachine { get; set; }
 
-        private GameObject m_workImage, m_sleepImage, m_playPhoneImage, m_internetImage, m_scareImage, m_boomImage;
+        private GameObject m_workImage, m_sleepImage, m_playPhoneImage, m_internetImage, m_scareStartImage,m_scaringImage, m_boomImage;
+
+        private GameObject m_hitToWorkImage, m_NormalWorkImage, m_ownerWorkImage;
 
         private Button m_AbuseBtn, m_HitBtn;
 
         private GameObject m_lastImage;
 
+        private GameObject m_lastWorkImage;
         public bool IsBossShow;
         // Use this for initialization
         void Start()
@@ -54,15 +68,26 @@ namespace WhackMole
             m_playPhoneImage.SetActive(false);
             m_internetImage = ObjectEX.GetGameObjectByName(gameObject, "Internet");
             m_internetImage.SetActive(false);
-            m_scareImage = ObjectEX.GetGameObjectByName(gameObject, "Scare");
-            m_scareImage.SetActive(false);
-            m_boomImage= ObjectEX.GetGameObjectByName(gameObject, "BoomBtn");
+            m_scareStartImage = ObjectEX.GetGameObjectByName(gameObject, "ScareStart");
+            m_scareStartImage.SetActive(false);
+            m_scaringImage = ObjectEX.GetGameObjectByName(gameObject, "Scaring");
+            m_scaringImage.SetActive(false);
+            m_boomImage = ObjectEX.GetGameObjectByName(gameObject, "BoomBtn");
             m_boomImage.SetActive(false);
             m_AbuseBtn = ObjectEX.GetGameObjectByName(gameObject, "AbuseBtn").GetComponent<Button>();
             m_AbuseBtn.onClick.AddListener(BossAbuse);
              m_HitBtn = ObjectEX.GetGameObjectByName(gameObject, "HitBtn").GetComponent<Button>();
             m_HitBtn.onClick.AddListener(BossHit);
             m_lastImage = m_workImage;
+
+            m_hitToWorkImage= ObjectEX.GetGameObjectByName(gameObject, "HitToWork");
+            m_hitToWorkImage.SetActive(false);
+            m_NormalWorkImage = ObjectEX.GetGameObjectByName(gameObject, "NormalWork");
+            m_NormalWorkImage.SetActive(false);
+            m_ownerWorkImage = ObjectEX.GetGameObjectByName(gameObject, "ReturnWork");
+            m_ownerWorkImage.SetActive(false);
+            m_lastWorkImage = m_NormalWorkImage;
+
             m_lastImage.SetActive(transform);
          
 
@@ -78,6 +103,45 @@ namespace WhackMole
         {
             StateMachine.HandleMessage(new StateEvent(StateEventType.BossHit));
             m_boomImage.SetActive(false);
+        }
+
+        public void RefreshWorkSate(WorkState state)
+        {
+
+            GameObject temObj = null;
+
+            float addProgress = 0;
+            switch (state)
+            {
+                case WorkState.HitToWork:
+                    addProgress = 0.5f;
+                    temObj = m_hitToWorkImage;
+                    break;
+                case WorkState.NormalWork:
+                    addProgress = 1f;
+                    temObj = m_NormalWorkImage;
+                    break;
+                case WorkState.OwnerReturnWork:
+                    addProgress = 1.5f;
+                    temObj = m_ownerWorkImage;
+                    break;
+               
+            }
+            if (m_lastWorkImage != null)
+            {
+                m_lastWorkImage.SetActive(false);
+                if (temObj != null)
+                {
+                    m_lastWorkImage = temObj;
+                }
+                m_lastWorkImage.SetActive(true);
+                Timer.New(1f, () => { m_lastWorkImage.SetActive(false); });
+
+            }
+            EventDispatcher.TriggerEvent(BattleEvent.AddProgress, addProgress);
+
+          
+
         }
 
         public void ChangeState(NpcState state)
@@ -98,9 +162,13 @@ namespace WhackMole
                 case NpcState.Internet:
                     temObj = m_internetImage;
                     break;
-                case NpcState.Scare:
-                    temObj = m_scareImage;
+                case NpcState.ScareStart:
+                    temObj = m_scareStartImage;
                     break;
+                case NpcState.Scaring:
+                    temObj = m_scaringImage;
+                    break;
+
             }
 
             if (temObj != null)

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WhackMole
 {
-    public class NpcStateInternet : StateBase<NpcActor>
+    public class NpcStateInternet : NpcStatePlay
     {
 
         public override void Enter(NpcActor owner)
@@ -20,7 +20,7 @@ namespace WhackMole
             {
                 case StateEventType.BossCome:
                     owner.StateMachine.ChangeState(new NpcStateWork());
-                    EventDispatcher.TriggerEvent(BattleEvent.AddProgress, ProgressMgr.InternetAddProgress);
+               owner.RefreshWorkSate(WorkState.HitToWork);
 
                     return true;
                
